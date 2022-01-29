@@ -1,4 +1,6 @@
-﻿using HackerNews.Domain.Entities.Base;
+﻿using HackerNews.API.Application.Services.Cache;
+using HackerNews.Domain.Entities.Base;
+using HackerNews.Domain.Interfaces.App.Services.Cache;
 using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis;
 using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis.Factory;
 using HackerNews.Domain.Interfaces.Infra.Logger;
@@ -43,6 +45,8 @@ namespace HackerNews.API.Extensions
 
             serviceCollection.AddTransient<IHackerNewsClient, HackerNewsClient>();
             serviceCollection.AddTransient<IHackerNewsService, HackerNewsService>();
+
+            serviceCollection.AddSingleton<INewsCacheService, NewsCacheService>();
 
             serviceCollection.AddSingleton<IRedisConnectionFactory, RedisConnectionFactory>();
             serviceCollection.AddSingleton<IHackerNewsRedis, HackerNewsRedis>();

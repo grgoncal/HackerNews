@@ -40,6 +40,18 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             return new Response(top20News).GetResponseAsTask();
         }
 
+        private List<long> GetBestHistoryIdList()
+        {
+            var idList = new List<long>();
+
+            SafeCaller.SafeCall(() =>
+            {
+                idList = _hackerNewsService.GetListOfBestHistoriesIds();
+            }, _logger);
+
+            return idList;
+        }
+
         private List<New> GetHistoriesDetails(List<long> idList)
         {
             var newsDetailsList = new List<New>();
@@ -52,7 +64,7 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             taskAwaiter.Wait();
 
             if (taskAwaiter.Status == TaskStatus.Faulted)
-                _logger.Error(""); // Check this 
+                _logger.Error(""); // TODO: Check this 
 
             return newsDetailsList;
         }
@@ -81,18 +93,6 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             }, _logger);
 
             return newDetail;
-        }
-
-        private List<long> GetBestHistoryIdList()
-        {
-            var idList = new List<long>();
-
-            SafeCaller.SafeCall(()=>
-            {
-                idList = _hackerNewsService.GetListOfBestHistoriesIds();
-            }, _logger);
-
-            return idList;
         }
     }
 }

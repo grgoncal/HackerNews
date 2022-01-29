@@ -28,5 +28,10 @@ namespace HackerNews.Domain.Entities.Integration
         {
             return Task.FromResult(this);
         }
+
+        public bool HasError()
+        {
+            return !string.IsNullOrEmpty(Error) || Content == null;
+        }
     }
 }

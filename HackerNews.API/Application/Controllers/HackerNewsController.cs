@@ -14,7 +14,7 @@ namespace HackerNews.API.Application.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("GetTop20News")]
+        [HttpGet("best20")]
         public IActionResult GetTop20News()
         {
             var getTop20NewsCommand = new GetTop20NewsCommand();
@@ -26,7 +26,7 @@ namespace HackerNews.API.Application.Controllers
             return Ok(response);
         }
 
-        [HttpGet("HealthCheck")]
+        [HttpGet("health-check")]
         public IActionResult HealthCheck()
         {
             return Ok();
