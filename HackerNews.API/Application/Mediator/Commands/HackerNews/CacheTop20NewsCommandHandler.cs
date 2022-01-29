@@ -1,4 +1,5 @@
 ﻿using HackerNews.API.Application.Mediator.Base;
+using HackerNews.Domain.Constants;
 using HackerNews.Domain.Entities.HackerNews;
 using HackerNews.Domain.Entities.Integration;
 using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis;
@@ -35,7 +36,7 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
 
             var top20News = newsList.OrderByDescending(n => n.Score).Take(20).ToList();
 
-            _hackerNewsRedis.Add("hacker-news.top20", top20News, TimeSpan.FromMinutes(15));
+            _hackerNewsRedis.Add(RedisConstants.Top20News, top20News, TimeSpan.FromMinutes(15));
 
             return new Response(top20News).GetResponseAsTask();
         }

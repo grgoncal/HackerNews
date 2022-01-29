@@ -22,7 +22,7 @@ namespace HackerNews.Domain.Entities.HackerNews
         public List<New> NewsList { get; set; }
         public DateTime ExpirationDate { get; set; }
 
-        public void UpdateCache(List<New> newsList)
+        public void RefreshCache(List<New> newsList)
         {
             NewsList = newsList;
             ExpirationDate = DateTime.Now.AddMinutes(15);
@@ -37,6 +37,11 @@ namespace HackerNews.Domain.Entities.HackerNews
                 return true;
 
             return false;
+        }
+
+        public void UpdateCache(List<New> newsList)
+        {
+            NewsList = newsList;
         }
     }
 }

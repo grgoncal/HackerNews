@@ -23,7 +23,7 @@ namespace HackerNews.API.Application.Controllers
             if (!string.IsNullOrEmpty(response.Error))
                 return StatusCode(500, response);
 
-            return Ok(response);
+            return Ok(response.Content);
         }
 
         [HttpGet("health-check")]
