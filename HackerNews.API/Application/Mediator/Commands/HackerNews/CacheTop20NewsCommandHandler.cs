@@ -64,7 +64,7 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             taskAwaiter.Wait();
 
             if (taskAwaiter.Status == TaskStatus.Faulted)
-                _logger.Error(""); // TODO: Check this 
+                throw new Exception("Failed retrieving stories details"); // Obs 1.
 
             return newsDetailsList;
         }
