@@ -55,5 +55,6 @@ is mandatory.<br>
 ## Final considerations
 
 1 - Monitoring should be added to keep track of errors (datadog, dynatrace etc)<br>
-2 - I did not add any k8n file, or cloud formation stuff since I don't think it would be useful for anything in this context.
-2 - Making this was really fun! (: Took me 3~ hours to make it. 
+2 - I did not add any k8n file, or cloud formation stuff since I don't think it would be useful for anything in this context.<br>
+3 - I used Sonar to help with code quality. <br>
+4 - Making this was really fun! (: Took me 3~ hours to make it. 
