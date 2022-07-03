@@ -31,7 +31,7 @@ namespace HackerNews.Tests.UnitTesting.HackerNews.REST
         [Test]
         public void When_GetAllStoriesIds_Expect_AllStoriesIds()
         {
-            var result = _hackerNewsService.GetListOfBestHistoriesIds();
+            var result = _hackerNewsService.GetIdListOfBestHistoriesAsync();
 
             Assert.IsTrue(result != null);
             Assert.IsTrue(result.Count > 1);
@@ -40,7 +40,7 @@ namespace HackerNews.Tests.UnitTesting.HackerNews.REST
         [Test]
         public void When_GetStoryDetail_Expect_StoryDetail()
         {
-            var id = _hackerNewsService.GetListOfBestHistoriesIds().FirstOrDefault();
+            var id = _hackerNewsService.GetIdListOfBestHistoriesAsync().FirstOrDefault();
 
             var detailedNew = _hackerNewsService.GetNewDetails(id);
 

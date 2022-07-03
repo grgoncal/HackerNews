@@ -9,7 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerNews.Domain", "Hacker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerNews.Infraestructure", "HackerNews.Infraestructure\HackerNews.Infraestructure.csproj", "{D5B25BFC-EDF2-47EB-A77C-0FAA10FFE4AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerNews.Tests", "HackerNews.UnitTests\HackerNews.Tests.csproj", "{CC71D13B-96E9-40ED-A3ED-7AB855C3ADEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HackerNews.Tests", "HackerNews.UnitTests\HackerNews.Tests.csproj", "{CC71D13B-96E9-40ED-A3ED-7AB855C3ADEA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8E59F8F2-5ABC-4D91-B779-A2851E979BBC}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+		kubernetes.dev.yaml = kubernetes.dev.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

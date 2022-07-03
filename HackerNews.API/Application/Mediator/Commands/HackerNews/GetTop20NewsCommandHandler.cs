@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace HackerNews.API.Application.Mediator.Commands.HackerNews
 {
-    public class GetTop20NewsCommandHandler : AbstractRequestHandler<GetTop20NewsCommand>
+    public class GetTop20NewsCommandHandler : AbstractExecutionHandler<GetTop20NewsCommand>
     {
         private readonly INewsCacheService _newsCacheService;
 
@@ -24,7 +24,7 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             _newsCacheService = newsCacheService;
         }
 
-        internal override Task<Response> HandleRequest(GetTop20NewsCommand request, CancellationToken cancellationToken)
+        internal override Task<Response> Execute(GetTop20NewsCommand request, CancellationToken cancellationToken)
         {
             var top20News = _newsCacheService.GetTop20News();
 

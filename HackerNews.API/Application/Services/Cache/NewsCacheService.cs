@@ -1,4 +1,5 @@
 ﻿using HackerNews.API.Application.Mediator.Commands.HackerNews;
+using HackerNews.API.Domain.Entities.Mediator.Commands;
 using HackerNews.Domain.Constants;
 using HackerNews.Domain.Entities.HackerNews;
 using HackerNews.Domain.Entities.Integration;
@@ -7,6 +8,7 @@ using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HackerNews.API.Application.Services.Cache
 {
@@ -26,7 +28,7 @@ namespace HackerNews.API.Application.Services.Cache
             cachedNews = new CachedNews(DateTime.Now.AddMinutes(15));
         }
 
-        public List<New> GetTop20News()
+        public async Task<List<New>> GetTop20News()
         {
             if (cachedNews.IsCacheInvalid())
             {
@@ -35,7 +37,7 @@ namespace HackerNews.API.Application.Services.Cache
                 if (top20News == null)
                 {
                     var cacheTop20NewsCommand = new CacheTop20NewsCommand();
-                    var response = _mediator.Send(cacheTop20NewsCommand).GetAwaiter().GetResult();
+                    var response = await _mediator.Send(cacheTop20NewsCommand);
 
                     top20News = ParseResponse(response);
                     cachedNews.RefreshCache(top20News);
