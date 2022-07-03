@@ -2,60 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hackernews-api
-  labels: 
-    app: hackernews-api
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: hackernews-api
+      app: hackernews-api-pod
   template:
     metadata:
       labels:
-        app: hackernews-api
+        app: hackernews-api-pod
     spec:
       containers:
-      - name: hackernews-api
-        image: hackernews/api:80
-        ports:
-          - containerPort: 80
+      - name: hackernews-api-container
+        image: hackernews.api:v1
         resources:
           requests:
-            cpu: 100m
+            cpu: 200m
             memory: 300Mi
           limits: 
-            cpu: 300m
+            cpu: 400m
             memory: 500Mi
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: hackernews-api-service
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 80
-  selector:
-    app: hackernews-api
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: hackernews-api-ingress
-  labels:
-    app: hackernews-api-ingress
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: hackernews-api-service
-            port:
-              number: 80
+        ports:
+        - containerPort: 80

@@ -5,6 +5,8 @@ using HackerNews.Domain.Entities.HackerNews;
 using HackerNews.Domain.Entities.Integration;
 using HackerNews.Domain.Interfaces.App.Services.Cache;
 using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis;
+using HackerNews.Domain.Interfaces.Infra.Logger;
+using HackerNews.Infraestructure.Tools;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,41 +14,59 @@ using System.Threading.Tasks;
 
 namespace HackerNews.API.Application.Services.Cache
 {
-    public class NewsCacheService : INewsCacheService
+    public class NewsCacheService : AbstractHandler, INewsCacheService
     {
         private readonly CachedNews cachedNews;
 
         private readonly IHackerNewsRedis _hackerNewsRedis;
         private readonly IMediator _mediator;
+        private readonly ILogger _logger;
 
         public NewsCacheService(IHackerNewsRedis hackerNewsRedis,
-            IMediator mediator)
+            IMediator mediator,
+            ILogger logger)
         {
             _hackerNewsRedis = hackerNewsRedis;
             _mediator = mediator;
+            _logger = logger;
 
             cachedNews = new CachedNews(DateTime.Now.AddMinutes(15));
         }
 
-        public async Task<List<New>> GetTop20News()
+        public async Task<Response> GetTop20NewsAsync()
         {
             if (cachedNews.IsCacheInvalid())
             {
-                var top20News = _hackerNewsRedis.Get(RedisConstants.Top20News);
-
-                if (top20News == null)
+                try
                 {
-                    var cacheTop20NewsCommand = new CacheTop20NewsCommand();
-                    var response = await _mediator.Send(cacheTop20NewsCommand);
-
-                    top20News = ParseResponse(response);
-                    cachedNews.RefreshCache(top20News);
+                    await DoWorkAsync(async () =>
+                    {
+                        await UpdateCacheAndGetNews();
+                    }, (e) => _logger.Error($"Failed to cache top hacker news {e}"));
                 }
-
-                cachedNews.UpdateCache(top20News);
+                catch (Exception e)
+                {
+                    return new Response(e);
+                }
             }
 
-            return cachedNews.NewsList;
+            return new Response(cachedNews.NewsList);
+        }
+
+        private async Task UpdateCacheAndGetNews()
+        {
+            var top20News = await _hackerNewsRedis.GetAsync(RedisConstants.Top20News);
+
+            if (top20News == null)
+            {
+                var cacheTop20NewsCommand = new CacheTop20NewsCommand();
+                var response = await _mediator.Send(cacheTop20NewsCommand);
+
+                top20News = ParseResponse(response);
+                cachedNews.RefreshCache(top20News);
+            }
+
+            cachedNews.UpdateCache(top20News);
         }
 
         private List<New> ParseResponse(Response response)

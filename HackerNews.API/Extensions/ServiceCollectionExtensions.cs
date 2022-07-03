@@ -25,12 +25,13 @@ namespace HackerNews.API.Extensions
             serviceCollection.Configure<AppSettings>(configuration);
 
             serviceCollection.AddMvc();
-            serviceCollection.AddControllers();
+            serviceCollection.AddControllersWithViews().AddNewtonsoftJson(options =>
+               options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             serviceCollection.AddSwaggerGen(swagger =>
             {
                 swagger.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "HackerNews API", Version = "v1" });
-                // Security layer would be added here
             });
 
             serviceCollection.AddMediatR(typeof(Startup));

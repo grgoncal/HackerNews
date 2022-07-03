@@ -25,6 +25,7 @@ namespace HackerNews.Infraestructure.Tools
             catch (Exception e)
             {
                 errorAction(e);
+                throw;
             }
         }
 
@@ -45,6 +46,28 @@ namespace HackerNews.Infraestructure.Tools
             catch (Exception e)
             {
                 errorAction(e);
+                throw;
+            }
+        }
+
+        public async Task RetryDoWorkAsync(Func<Task> action, Action<Exception, int> errorAction, int retryCount)
+        {
+            try
+            {
+                var retryPolicy = Policy.Handle<Exception>().RetryAsync(retryCount, (e, retryCount) =>
+                {
+                    errorAction(e, retryCount);
+                });
+
+                await retryPolicy.ExecuteAsync(async () =>
+                {
+                    await action();
+                });
+            }
+            catch (Exception e)
+            {
+                errorAction(e, retryCount + 1);
+                throw;
             }
         }
 
@@ -57,6 +80,7 @@ namespace HackerNews.Infraestructure.Tools
             catch (Exception e)
             {
                 errorAction(e);
+                throw;
             }
         }
 
@@ -69,6 +93,7 @@ namespace HackerNews.Infraestructure.Tools
             catch (Exception e)
             {
                 errorAction(e);
+                throw;
             }
         }
 
