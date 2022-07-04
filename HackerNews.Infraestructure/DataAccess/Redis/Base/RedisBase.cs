@@ -1,4 +1,5 @@
-﻿using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis.Base;
+﻿using HackerNews.Domain.Constants;
+using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis.Base;
 using HackerNews.Domain.Interfaces.Infra.Logger;
 using HackerNews.Infraestructure.Tools;
 using Newtonsoft.Json;
@@ -24,7 +25,7 @@ namespace HackerNews.Infraestructure.DataAccess.Redis.Base
 
         public async Task AddAsync(string key, object value, TimeSpan? expiresIn = null)
         {
-            expiresIn ??= TimeSpan.FromMinutes(15);
+            expiresIn ??= TimeSpan.FromMinutes(GeneralConstants.CacheTTL);
 
             await RetryDoWorkAsync(async () =>
             {

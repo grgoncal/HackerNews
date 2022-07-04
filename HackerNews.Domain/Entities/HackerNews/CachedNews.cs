@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HackerNews.Domain.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace HackerNews.Domain.Entities.HackerNews
         public void RefreshCache(List<New> newsList)
         {
             NewsList = newsList;
-            ExpirationDate = DateTime.Now.AddMinutes(15);
+            ExpirationDate = DateTime.Now.AddMinutes(GeneralConstants.CacheTTL);
         }
 
         public bool IsCacheInvalid()

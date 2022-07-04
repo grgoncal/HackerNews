@@ -22,6 +22,6 @@ namespace HackerNews.Infraestructure.Services.HackerNews
         }
 
         protected override string ServiceUrl => 
-            _settings.Value.Endpoints.FirstOrDefault(e => e.Reference == Endpoints.HackerNews).BaseUrl;
+            _settings.Value.Endpoints.FirstOrDefault(e => e.Reference == GeneralConstants.HackerNews).BaseUrl;
     }
 }
