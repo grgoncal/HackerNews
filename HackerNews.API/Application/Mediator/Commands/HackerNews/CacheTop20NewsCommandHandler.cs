@@ -37,7 +37,7 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
 
             var top20News = newsList.OrderByDescending(n => n.Score).Take(20).ToList();
 
-            await _hackerNewsRedis.AddAsync(RedisConstants.Top20News, top20News);
+            await _hackerNewsRedis.AddAsync(GeneralConstants.RedisKey_Top20News, top20News);
 
             return new Response(top20News);
         }

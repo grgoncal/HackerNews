@@ -19,7 +19,7 @@ namespace HackerNews.Infraestructure.Services.HackerNews
         public HackerNewsService(IHackerNewsClient hackerNewsClient,
             IOptions<AppSettings> settings) : base(hackerNewsClient)
         {
-            _endpoint = settings.Value.Endpoints.FirstOrDefault(e => e.Reference == Endpoints.HackerNews);
+            _endpoint = settings.Value.Endpoints.FirstOrDefault(e => e.Reference == GeneralConstants.HackerNews);
         }
 
         public async Task<List<long>> GetIdListOfBestHistoriesAsync()

@@ -55,7 +55,7 @@ namespace HackerNews.API.Application.Services.Cache
 
         private async Task UpdateCacheAndGetNews()
         {
-            var top20News = await _hackerNewsRedis.GetAsync(RedisConstants.Top20News);
+            var top20News = await _hackerNewsRedis.GetAsync(GeneralConstants.RedisKey_Top20News);
 
             if (top20News == null)
             {
