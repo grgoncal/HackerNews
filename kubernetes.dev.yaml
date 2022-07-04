@@ -12,14 +12,17 @@ spec:
         app: hackernews-api-pod
     spec:
       containers:
-      - name: hackernews-api-container
-        image: hackernews.api:v1
-        resources:
-          requests:
-            cpu: 200m
-            memory: 300Mi
-          limits: 
-            cpu: 400m
-            memory: 500Mi
-        ports:
-        - containerPort: 80
+        - env: 
+            - name: RedisConfigs__0__ConnectionString
+              value: "172.18.0.2:6379, abortConnect=false"
+          name: hackernews-api-container
+          image: hackernews.api:v1
+          resources:
+            requests:
+              cpu: 200m
+              memory: 300Mi
+            limits: 
+              cpu: 400m
+              memory: 500Mi
+          ports:
+          - containerPort: 80

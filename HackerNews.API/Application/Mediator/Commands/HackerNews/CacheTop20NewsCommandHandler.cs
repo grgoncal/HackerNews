@@ -6,6 +6,7 @@ using HackerNews.Domain.Entities.Integration;
 using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis;
 using HackerNews.Domain.Interfaces.Infra.Logger;
 using HackerNews.Domain.Interfaces.Infra.Services.HackerNews;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             return await DoWorkAsync(async () =>
             {
                 return await _hackerNewsService.GetIdListOfBestHistoriesAsync();
-            }, (e) => _logger.Error("Failed to fetch best histories ids"));
+            }, (e) => _logger.Error($"Failed to fetch best histories ids {e}"));
         }
 
         private List<New> GetHistoriesDetails(List<long> idList)
@@ -88,7 +89,7 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             return await DoWorkAsync(async () =>
             {
                 return await _hackerNewsService.GetNewDetailAsync(id.ToString());
-            }, (e) => _logger.Error("Failed to fetch history details"));
+            }, (e) => _logger.Error($"Failed to fetch history details {e}"));
         }
     }
 }

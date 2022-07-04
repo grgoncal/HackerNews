@@ -17,8 +17,9 @@ namespace HackerNews.Infraestructure.DataAccess.Redis.Base
         protected IServer _server;
         protected ILogger _logger;
 
-        protected RedisBase()
+        protected RedisBase(ILogger logger)
         {
+            _logger = logger;
         }
 
         public async Task AddAsync(string key, object value, TimeSpan? expiresIn = null)
