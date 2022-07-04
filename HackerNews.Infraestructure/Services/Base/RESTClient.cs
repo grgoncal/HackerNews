@@ -1,5 +1,6 @@
 ﻿using HackerNews.Domain.Interfaces.Infra.Logger;
 using HackerNews.Domain.Interfaces.Infra.Services.Base;
+using HackerNews.Infraestructure.Tools;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace HackerNews.Infraestructure.Services.Base
 {
-    public abstract class RESTClient : IRESTClient
+    public abstract class RESTClient : AbstractHandler, IRESTClient
     {
         private readonly ILogger _logger;
         protected abstract string ServiceUrl { get; }
@@ -26,31 +27,28 @@ namespace HackerNews.Infraestructure.Services.Base
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri($"{ServiceUrl}");
+                client.BaseAddress = new Uri(ServiceUrl);
 
-                var response = await client.GetAsync(method, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
+                var response = await client.GetAsync(method, HttpCompletionOption.ResponseContentRead);
 
                 if (response.IsSuccessStatusCode)
-                {
-                    result = GetResult<TResult>(response);
-                }
+                    result = await ParseResultAsync<TResult>(response);
             }
 
             return result;
         }
 
-        private TResult GetResult<TResult>(HttpResponseMessage response) where TResult : class
+        private async Task<TResult> ParseResultAsync<TResult>(HttpResponseMessage response) where TResult : class
         {
-            try
+            return await DoWorkAsync(async () =>
             {
-                var serializedContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var serializedContent = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<TResult>(serializedContent);
-            }
-            catch (Exception ex)
+            }, (e) =>
             {
-                _logger.Error($"Error while deserializing get response: {ex}");
-                throw;
-            }
+                _logger.Error($"Error while deserializing get response: {e}");
+                throw e.InnerException ?? e;
+            });
         }
     }
 }

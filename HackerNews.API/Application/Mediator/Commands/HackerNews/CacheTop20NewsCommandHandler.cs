@@ -1,11 +1,12 @@
 ﻿using HackerNews.API.Application.Mediator.Base;
+using HackerNews.API.Domain.Entities.Mediator.Commands;
 using HackerNews.Domain.Constants;
 using HackerNews.Domain.Entities.HackerNews;
 using HackerNews.Domain.Entities.Integration;
 using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis;
 using HackerNews.Domain.Interfaces.Infra.Logger;
 using HackerNews.Domain.Interfaces.Infra.Services.HackerNews;
-using HackerNews.Infraestructure.Tools.SafeCaller;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace HackerNews.API.Application.Mediator.Commands.HackerNews
 {
-    public class CacheTop20NewsCommandHandler : AbstractRequestHandler<CacheTop20NewsCommand>
+    public class CacheTop20NewsCommandHandler : AbstractExecutionHandler<CacheTop20NewsCommand>
     {
         private readonly IHackerNewsRedis _hackerNewsRedis;
         private readonly IHackerNewsService _hackerNewsService;
@@ -29,37 +30,36 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             _hackerNewsService = hackerNewsService;
         }
 
-        internal override Task<Response> HandleRequest(CacheTop20NewsCommand request, CancellationToken cancellationToken)
+        internal override async Task<Response> Execute(CacheTop20NewsCommand request, CancellationToken cancellationToken)
         {
-            var idList = GetBestHistoryIdList();
+            var idList = await GetBestHistoriesIdsAsync();
             var newsList = GetHistoriesDetails(idList);
 
             var top20News = newsList.OrderByDescending(n => n.Score).Take(20).ToList();
 
-            _hackerNewsRedis.Add(RedisConstants.Top20News, top20News, TimeSpan.FromMinutes(15));
+            await _hackerNewsRedis.AddAsync(RedisConstants.Top20News, top20News);
 
-            return new Response(top20News).GetResponseAsTask();
+            return new Response(top20News);
         }
 
-        private List<long> GetBestHistoryIdList()
+        private async Task<List<long>> GetBestHistoriesIdsAsync()
         {
-            var idList = new List<long>();
-
-            SafeCaller.SafeCall(() =>
+            return await DoWorkAsync(async () =>
             {
-                idList = _hackerNewsService.GetListOfBestHistoriesIds();
-            }, _logger);
-
-            return idList;
+                return await _hackerNewsService.GetIdListOfBestHistoriesAsync();
+            }, (e) => _logger.Error($"Failed to fetch best histories ids {e}"));
         }
 
         private List<New> GetHistoriesDetails(List<long> idList)
         {
             var newsDetailsList = new List<New>();
-
             var taskList = new List<Task>();
+
             foreach (var id in idList)
-                taskList.Add(GetHistoryDetail(id, newsDetailsList));
+            {
+                var task = GetHistoryDetail(id, newsDetailsList);
+                taskList.Add(task);
+            }
 
             var taskAwaiter = Task.WhenAll(taskList);
             taskAwaiter.Wait();
@@ -70,11 +70,11 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             return newsDetailsList;
         }
 
-        private Task GetHistoryDetail(long id, List<New> newsDetailsList)
+        private async Task GetHistoryDetail(long id, List<New> newsDetailsList)
         {
-            return Task.Run(() =>
+            await Task.Run(async () =>
             {
-                var newDetail = GetNewDetail(id);
+                var newDetail = await GetNewDetailAsync(id);
 
                 lock (_locker)
                 {
@@ -84,16 +84,12 @@ namespace HackerNews.API.Application.Mediator.Commands.HackerNews
             });
         }
 
-        private New GetNewDetail(long id)
+        private async Task<New> GetNewDetailAsync(long id)
         {
-            var newDetail = new New();
-
-            SafeCaller.SafeCall(() =>
+            return await DoWorkAsync(async () =>
             {
-                newDetail = _hackerNewsService.GetNewDetails(id);
-            }, _logger);
-
-            return newDetail;
+                return await _hackerNewsService.GetNewDetailAsync(id.ToString());
+            }, (e) => _logger.Error($"Failed to fetch history details {e}"));
         }
     }
 }

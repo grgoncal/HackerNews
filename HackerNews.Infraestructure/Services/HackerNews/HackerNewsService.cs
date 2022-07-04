@@ -14,26 +14,24 @@ namespace HackerNews.Infraestructure.Services.HackerNews
 {
     public class HackerNewsService : Service<IHackerNewsClient>, IHackerNewsService
     {
-        private readonly IOptions<AppSettings> _settings;
+        private readonly Endpoint _endpoint;
 
         public HackerNewsService(IHackerNewsClient hackerNewsClient,
             IOptions<AppSettings> settings) : base(hackerNewsClient)
         {
-            _settings = settings;
+            _endpoint = settings.Value.Endpoints.FirstOrDefault(e => e.Reference == Endpoints.HackerNews);
         }
 
-        public List<long> GetListOfBestHistoriesIds()
+        public async Task<List<long>> GetIdListOfBestHistoriesAsync()
         {
-            var method = _settings.Value.Endpoints.FirstOrDefault(e => e.Reference == Endpoints.HackerNews).Methods[0];
-            return Client.Get<List<long>>(method).GetAwaiter().GetResult();
+            var method = _endpoint.Methods[0];
+            return await Client.Get<List<long>>(method);
         }
 
-        public New GetNewDetails(long newId)
+        public async Task<New> GetNewDetailAsync(string newId)
         {
-            var method = _settings.Value.Endpoints.FirstOrDefault(e => e.Reference == Endpoints.HackerNews).Methods[1];
-            var id = newId.ToString();
-
-            return Client.Get<New>(method.Replace("{ID}", id)).GetAwaiter().GetResult();
+            var method = _endpoint.Methods[1].Replace("{ID}", newId);
+            return await Client.Get<New>(method);
         }
     }
 }

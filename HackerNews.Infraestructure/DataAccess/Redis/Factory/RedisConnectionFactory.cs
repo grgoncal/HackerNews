@@ -5,6 +5,8 @@ using Microsoft.Extensions.Options;
 using HackerNews.Domain.Entities.Attributes;
 using System.Linq;
 using HackerNews.Domain.Interfaces.Infra.DataAccess.Redis.Factory;
+using HackerNews.Domain.Interfaces.Infra.Logger;
+using Newtonsoft.Json;
 
 namespace HackerNews.Infraestructure.DataAccess.Redis.Factory
 {
@@ -13,9 +15,12 @@ namespace HackerNews.Infraestructure.DataAccess.Redis.Factory
         [Redis(Reference = "HackerNews")]
         public Lazy<ConnectionMultiplexer> _hackerNewsConnection { get; set; }
 
-        public RedisConnectionFactory(IOptions<AppSettings> settings)
+        public RedisConnectionFactory(IOptions<AppSettings> settings,
+            ILogger logger)
         {
             var redisConfigs = settings.Value.RedisConfigs;
+
+            logger.Info($"Redis configs: {JsonConvert.SerializeObject(redisConfigs)}");
 
             _hackerNewsConnection = new Lazy<ConnectionMultiplexer>(() =>
             {

@@ -11,7 +11,7 @@ namespace HackerNews.API
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             var buider = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
                                                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)

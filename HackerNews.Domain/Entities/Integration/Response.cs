@@ -21,8 +21,13 @@ namespace HackerNews.Domain.Entities.Integration
             Error = error;
         }
 
+        public Response(Exception e)
+        {
+            Error = e;
+        }
+
         public object Content { get; set; }
-        public string Error { get; set; }
+        public object Error { get; set; }
 
         public Task<Response> GetResponseAsTask()
         {
@@ -31,7 +36,7 @@ namespace HackerNews.Domain.Entities.Integration
 
         public bool HasError()
         {
-            return !string.IsNullOrEmpty(Error) || Content == null;
+            return Error != null || Content == null;
         }
     }
 }

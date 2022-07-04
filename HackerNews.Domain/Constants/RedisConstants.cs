@@ -6,6 +6,6 @@ namespace HackerNews.Domain.Constants
 {
     public static class RedisConstants
     {
-        public static string Top20News = "hacker-news.top20";
+        public static readonly string Top20News = "hacker-news.top20";
     }
 }

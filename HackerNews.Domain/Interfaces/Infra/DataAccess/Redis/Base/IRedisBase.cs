@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace HackerNews.Domain.Interfaces.Infra.DataAccess.Redis.Base
 {
     public interface IRedisBase<T> 
     {
-        void Add(string key, object value, TimeSpan? expiresIn = null);
-        T Get(string key);
+        Task AddAsync(string key, object value, TimeSpan? expiresIn = null);
+        Task<T> GetAsync(string key);
     }
 }

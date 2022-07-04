@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HackerNews.Domain.Interfaces.Infra.Services.HackerNews
 {
     public interface IHackerNewsService
     {
-        List<long> GetListOfBestHistoriesIds();
-        New GetNewDetails(long newId);
+        Task<List<long>> GetIdListOfBestHistoriesAsync();
+        Task<New> GetNewDetailAsync(string newId);
     }
 }

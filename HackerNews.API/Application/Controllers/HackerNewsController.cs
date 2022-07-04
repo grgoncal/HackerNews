@@ -1,26 +1,25 @@
-﻿using HackerNews.API.Application.Mediator.Commands.HackerNews;
-using MediatR;
+﻿using HackerNews.Domain.Interfaces.App.Services.Cache;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HackerNews.API.Application.Controllers
 {
     [Route("api/[controller]")]
     public class HackerNewsController : Controller
     {
-        private readonly IMediator _mediator;
+        private readonly INewsCacheService _newsCacheService;
 
-        public HackerNewsController(IMediator mediator)
+        public HackerNewsController(INewsCacheService newsCacheService)
         {
-            _mediator = mediator;
+            _newsCacheService = newsCacheService;
         }
 
         [HttpGet("best20")]
-        public IActionResult GetTop20News()
+        public async Task<IActionResult> GetTop20News()
         {
-            var getTop20NewsCommand = new GetTop20NewsCommand();
-            var response = _mediator.Send(getTop20NewsCommand).Result;
+            var response = await _newsCacheService.GetTop20NewsAsync();
 
-            if (!string.IsNullOrEmpty(response.Error))
+            if (response.HasError())
                 return StatusCode(500, response);
 
             return Ok(response.Content);
